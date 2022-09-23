@@ -4,8 +4,8 @@
   vars:
     yum_name: "*"
     yum_state:  latest
-    yum_enablerepo: "rhel-?-server-rpms,rhel-?-server-satellite-tools-6.?-rpms"
-    yum_disablerepo: "*"
+    yum_enablerepo: "base,epel,extras,updates,repolist"
+    yum_disablerepo: "remi-php74"
     yum_exclude: ""
     dnf_name: "*"
     dnf_state: latest

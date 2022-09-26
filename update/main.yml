@@ -1,5 +1,5 @@
 ---
 
-- name: Package | {{ ansible_pkg_mgr | upper }}
+- name: Patch and reboot servers
   hosts: all
   include_tasks: "package-{{ ansible_pkg_mgr }}.yml"

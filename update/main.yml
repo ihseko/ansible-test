@@ -1,0 +1,4 @@
+---
+
+- name: Package | {{ ansible_pkg_mgr | upper }}
+  include_tasks: "package-{{ ansible_pkg_mgr }}.yml"

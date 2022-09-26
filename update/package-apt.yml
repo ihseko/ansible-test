@@ -1,0 +1,85 @@
+---
+
+- name: Package | APT - Check that HTTPS Transport is Installed
+  apt:
+    name: apt-transport-https
+    state: present
+  when:
+    - package__https | bool
+
+- name: Package | APT - Install sources.list
+  template:
+    src: "{{ package__apt_sources_tpl }}"
+    dest: "{{ package__apt_sources_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: APT Update Cache
+
+- name: Package | APT - Install backports.list
+  template:
+    src: "{{ package__apt_backports_tpl }}"
+    dest: "{{ package__apt_backports_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: APT Update Cache
+  when:
+    - package__apt_backports | bool
+    - ansible_distribution == 'Debian'
+
+- name: Package | APT - Install experimental.list
+  template:
+    src: "{{ package__apt_experimental_tpl }}"
+    dest: "{{ package__apt_experimental_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: APT Update Cache
+  when:
+    - package__apt_experimental | bool
+    - ansible_distribution == 'Debian'
+
+- name: packages APT - Custom repos
+  block:
+
+    - name: Package | APT - Install Custom repo key
+      apt_key:
+        url: "{{ item.key_url }}"
+        state: "{{ item.state | default(package__state) }}"
+      with_items: "{{ package__custom_repo.apt }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Package | APT - Install Custom repo
+      apt_repository:
+        repo: "{{ item.repo_url }}"
+        state: "{{ item.state | default(package__state) }}"
+        filename: "{{ item.filename | default(item.name) | lower }}"
+        update_cache: "{{ package__update_cache }}"
+      with_items: "{{ package__custom_repo.apt }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+  when:
+    - package__custom_repo.apt | length > 0
+
+- name: Package | APT - Run Handlers
+  meta: flush_handlers
+
+- name: Package | APT - Package Lists
+  apt:
+    name: "{{ item.apt | default(item.name) }}"
+    state: "{{ item.state | default(package__state) }}"
+    default_release: "{{ item.apt_default_release | default(omit) }}"
+    update_cache: "{{ package__update_cache }}"
+    cache_valid_time: "{{ package__cache_valid_time }}"
+    install_recommends: "{{ item.apt_install_recommends | default(omit) }}"
+  when:
+    - item.apt_ignore | default('false')
+  with_flattened:
+    - "{{ package__list }}"
+    - "{{ package__list_host }}"
+    - "{{ package__list_group }}"
+  loop_control:
+    label: "{{ item.apt | default(item.name) }}"

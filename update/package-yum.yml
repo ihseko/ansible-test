@@ -1,0 +1,41 @@
+---
+
+- name: Package | YUM - Install 'epel-release'
+  yum:
+    name: epel-release
+    state: present
+  when:
+    - package__yum_epel | bool
+
+- name: Package | YUM - Custom Repo
+  yum_repository:
+    name: "{{ item.name | lower }}"
+    description: "{{ item.name }}"
+    file: "{{ item.filename | default(item.name) | lower }}"
+    baseurl: "{{ item.baseurl }}"
+    gpgcakey: "{{ item.gpgcakey }}"
+    gpgcheck: "{{ item.gpgcheck | default('no') }}"
+    enabled: "{{ item.enable | default('yes') }}"
+    state: "{{ item.state | default(package_state) }}"
+  with_items: "{{ package__custom_repo.apt }}"
+  when:
+    - package__custom_repo.yum | length > 0
+  notify: YUM Clean Metadata
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Package | YUM - Run Handlers
+  meta: flush_handlers
+
+- name: Package | YUM - Package Lists
+  yum:
+    name: "{{ item.yum | default(item.name) }}"
+    state: "{{ item.state | default(package__state) }}"
+  when:
+    - item.yum_ignore | default('false')
+  with_flattened:
+    - "{{ package__list }}"
+    - "{{ package__list_host }}"
+    - "{{ package__list_group }}"
+  loop_control:
+    label: "{{ item.yum | default(item.name) }}"

@@ -1,4 +1,5 @@
 ---
 
 - name: Package | {{ ansible_pkg_mgr | upper }}
+  hosts: all
   include_tasks: "package-{{ ansible_pkg_mgr }}.yml"

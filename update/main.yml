@@ -1,8 +1,10 @@
 ---
 - name: Patch and reboot servers
-  hosts: all
-      tasks:
-    - include_tasks: package-yum.yml
-      when:
-        - (ansible_facts['distribution_major_version'] == '6') or
-          (ansible_facts['distribution_major_version'] == '7')
+- hosts: all
+  tasks:
+    - ansible.builtin.debug:
+        msg: task1
+
+    - name: Include task list in play only if the condition is true
+      ansible.builtin.include_tasks: "package-{{ ansible_pkg_mgr }}.yml"
+      when: ansible_pkg_mgr == 'yum'

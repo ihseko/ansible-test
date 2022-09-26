@@ -1,0 +1,37 @@
+---
+
+package__https: false
+package__update_cache: true
+package__cache_valid_time: 3600
+
+package__list: []
+
+package__list_host: []
+
+package__list_group: []
+
+package__custom_repo:
+  apt: []
+  # - name:
+  #   repo_url:
+  #   key_url:
+  #   state:
+  #   filename:
+  yum: []
+  # - name:
+  #   baseurl:
+  #   gpgcakey:
+  #   gpgcheck:
+  #   enable:
+  #   state:
+  #   filename:
+
+package__apt_debsrc: true
+package__apt_sources_tpl: apt-sources.list.j2
+package__apt_backports: true
+package__apt_backports_tpl: apt-backports.list.j2
+package__apt_experimental: true
+package__apt_experimental_tpl: apt-experimental.list.j2
+package__apt_contrib_nonfree: true
+
+package__yum_epel: true

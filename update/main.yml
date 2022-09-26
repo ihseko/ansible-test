@@ -4,3 +4,4 @@
   hosts: all
       tasks:
     - include_tasks: package-yum.yml
+   when: (ansible_os_family == 'RedHat')

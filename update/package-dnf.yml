@@ -1,6 +1,6 @@
 ---
 
-- name: Package | DNF - Package Lists
+- name: Package  DNF - Package Lists
   dnf:
     name: "{{ item.yum | default(item.name) }}"
     state: "{{ item.state | default(package__state) }}"

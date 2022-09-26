@@ -1,4 +1,0 @@
----
-# tasks file for au_update
-
-- include_tasks: "update/{{ ansible_os_family }}.yml"

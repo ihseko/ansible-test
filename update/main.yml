@@ -2,4 +2,4 @@
 
 - name: Patch and reboot servers
   hosts: all
-  include_tasks: "package-{{ ansible_pkg_mgr }}.yml"
+  include_tasks: "package-yum.yml"
